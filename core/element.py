@@ -2,16 +2,17 @@
 
 from typing import Optional, List, Dict, Callable, Any
 from .renderer import Renderer
+import uuid
 
 class Element:    
     _current = None
 
-    def __init__(self, tag: Optional[str] = "div", id: Optional[str] = None, value: Optional[Any] = None, connection = None):
-        self.id = id
+    def __init__(self, tag: Optional[str] = "div", id: Optional[str] = None, value: Optional[Any] = None, connection = None, **kwargs):
+        self.id = id or str(uuid.uuid4())
         self.value = value
         self.tag = tag
         self.children: List['Element'] = []
-        self.attrs: Dict[str, str] = {}
+        self.attrs: Dict[str, str] = kwargs
         self.events: Dict[str, Callable[[str, Any], None]] = {}
         self.classes: List[str] = []
         self.styles: Dict[str, str] = {}
@@ -22,6 +23,12 @@ class Element:
             Element._current.children.append(self)
             self.parent = Element._current
         
+    def get_scripts(self):
+        return [], ''
+
+    def get_styles(self):
+        return []
+
     def add_child(self, child: 'Element'):
         child.parent = self
         if child.connection is None:
