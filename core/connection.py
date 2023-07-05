@@ -20,10 +20,6 @@ class Connection:
         if self.socket is not None:
             self.socket.emit(event_name, {"id": id, "value": value})
 
-    def bind(self, component_id: str, event: str, callback: Callable[[str, Any], None]):
-        if component_id in self.components:
-            self.components[component_id].add_event(event, callback)
-
     def receive_from_client(self, data: Dict[str, str]):
         element_id = data["id"]
         event_name = data["event_name"]
@@ -31,8 +27,7 @@ class Connection:
         print(f"Received {event_name} from {element_id}")
 
         for component in self.components.values():
-            print(component)
-            element = component.find_element(element_id)
+            element = component.find_element_by_id(element_id)
             if element is not None:
                 element.handle_event(element_id, event_name)
                 break

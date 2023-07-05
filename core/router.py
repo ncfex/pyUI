@@ -11,8 +11,7 @@ class Router:
     def get_component(self, route):
         if route in self.routes:
             return self.routes[route](self.connection)
-        else:
-            return None
+        return None
             
     def navigate_to(self, route: str):
         print(f"Checking {route} in {self.routes}")

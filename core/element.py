@@ -4,6 +4,8 @@ from typing import Optional, List, Dict, Callable, Any
 from .renderer import Renderer
 
 class Element:    
+    _current = None
+
     def __init__(self, tag: Optional[str] = "div", id: Optional[str] = None, value: Optional[Any] = None, connection = None):
         self.id = id
         self.value = value
@@ -16,6 +18,10 @@ class Element:
         self.parent = None
         self.connection = connection
 
+        if Element._current is not None:
+            Element._current.children.append(self)
+            self.parent = Element._current
+        
     def add_child(self, child: 'Element'):
         child.parent = self
         if child.connection is None:
@@ -35,6 +41,9 @@ class Element:
         self.classes.append(class_name)
         return self
 
+    def cls(self, class_name: str):
+        return self.add_class(class_name)
+
     def add_style(self, style_name: str, style_value: str):
         self.styles[style_name] = style_value
         return self
@@ -52,10 +61,15 @@ class Element:
         for child in self.children:
             if child.id == id:
                 return child
-            result = child.find_element_by_id(id)  # Check if id exists in child's descendants
+            result = child.find_element_by_id(id)
+            print(f"Found element {result}")
             if result is not None:
                 return result
         return None
+
+    def navigate_to(self, route: str):
+        if self.connection and self.connection.router:
+            self.connection.router.navigate_to(route)
 
     def render(self):
         rendered_str = Renderer.render(self)
@@ -63,15 +77,16 @@ class Element:
         print(f"Rendering an element {self.id} \n With content of \n {rendered_str}")
 
         connection = self.connection or (self.parent.connection if self.parent else None)
+        
         if connection:
             connection.send(self.id, rendered_str, "update-content")
         
         return rendered_str
 
     def __enter__(self):
-        if hasattr(self, 'parent') and self.parent is not None:
-            self.parent.add_child(self)
+        self._prev = Element._current
+        Element._current = self
         return self
 
-    def __exit__(self, type, value, traceback):
-        pass
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        Element._current = self._prev

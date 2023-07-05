@@ -3,7 +3,6 @@
 from flask import Flask
 from flask_socketio import SocketIO
 from core.connection import Connection
-from core.component import HomePage, UserPage
 from core.router import Router
 
 app = Flask(__name__)
@@ -13,6 +12,9 @@ socketio.init_app(app)  # Initialize Flask-SocketIO
 
 connection = Connection()
 connection.socket = socketio
+
+from components.homePage import HomePage
+from components.userPage import UserPage
 
 # ROUTER
 router = Router(connection)
@@ -50,40 +52,39 @@ def index(route=None):
     <body>
         {component.render()}
         <script>
-         const socket = io();
-         socket.on("connect", function() {{
-             console.log("Connected to server");
-         }});
-         socket.on("disconnect", function() {{
-             console.log("Disconnected from server");
-         }});
-         socket.on('from_server', function(data) {{
-             console.log('Received message from server:', data);
-             let element = document.getElementById(data.id);
-             if (element) {{
-                 element.innerText = data.value;
-             }}
-         }});
-         socket.on('update-content', function(data) {{
-            console.log('Received update-content message from server:', data);
-            let element = document.getElementById(data.id);
-            if (element) {{
-                element.outerHTML = data.value;
+            const socket = io();
+            socket.on("connect", function() {{
+                console.log("Connected to server");
+            }});
+            socket.on("disconnect", function() {{
+                console.log("Disconnected from server");
+            }});
+            socket.on('from_server', function(data) {{
+                console.log('Received message from server:', data);
+                let element = document.getElementById(data.id);
+                if (element) {{
+                    element.innerText = data.value;
+                }}
+            }});
+            socket.on('update-content', function(data) {{
+                console.log('Received update-content message from server:', data);
+                let element = document.getElementById(data.id);
+                if (element) {{
+                    element.outerHTML = data.value;
+                }}
+            }});
+            socket.on('navigate_to', function(data) {{
+                console.log('Received navigate message from server:', data);
+                window.location = "/" + data.value;
+            }});
+            function clientEmit(id, event_name) {{
+                console.log(id, event_name)
+                socket.emit('from_client', {{id: id, event_name: event_name}});
             }}
-        }});
-         socket.on('navigate_to', function(data) {{
-             console.log('Received navigate message from server:', data);
-             window.location = "/" + data.value;
-         }});
-         function clientEmit(id, event_name) {{
-             console.log(id, event_name)
-             socket.emit('from_client', {{id: id, event_name: event_name}});
-         }}
-     </script>
+        </script>
     </body>
     </html>
     """
-
 @socketio.on('from_client')
 def handle_message(data):
     print('Received message:', data)
