@@ -7,8 +7,6 @@ class Renderer:
         styles_str = "; ".join([f'{k}: {v}' for k, v in element.styles.items()])
         children_str = "\n".join([Renderer.render(child) for child in element.children])
 
-        print(f"children_str of {element.id} \n => {children_str}")
-
         events_str = ""
         for event_name, action in element.events.items():
             event_handler_str = element.get_client_handler_str(event_name)

@@ -5,16 +5,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-  {% for style in styles %}
-    <link rel="stylesheet" href="{{ style }}">
-    {% endfor %}
-  {% for script in scripts %}
-  <script src="{{ script }}"></script>
-  {% endfor %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.1/socket.io.js"></script>
 </head>
 
-<body>
-  {{ component|safe }}
+<body>TEST
   <script src="/static/js/custom.js"></script>
 </body>
 

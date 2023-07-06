@@ -40,9 +40,9 @@ class Element:
         self.events[event] = callback
         return self
 
-    def handle_event(self, element_id: str, event_name: str):
+    def handle_event(self, element_id: str, event_name: str, sid: str):
         if event_name in self.events:
-            self.events[event_name](element_id, event_name)
+            self.events[event_name](element_id, event_name, sid)
 
     def add_class(self, class_name: str):
         self.classes.append(class_name)
@@ -69,8 +69,8 @@ class Element:
             if child.id == id:
                 return child
             result = child.find_element_by_id(id)
-            print(f"Found element {result}")
             if result is not None:
+                print(f"Found element {result}")
                 return result
         return None
 
@@ -80,13 +80,12 @@ class Element:
 
     def render(self):
         rendered_str = Renderer.render(self)
-        
-        print(f"Rendering an element {self.id} \n With content of \n {rendered_str}")
+
 
         connection = self.connection or (self.parent.connection if self.parent else None)
         
         if connection:
-            connection.send(self.id, rendered_str, "update-content")
+            connection.emit(self.id, rendered_str, "update-content")
         
         return rendered_str
 
