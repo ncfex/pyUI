@@ -15,14 +15,14 @@ class Router:
         self.routes[route] = Route(route, component_class)
         print(f"{self.routes}")
 
-    def get_component(self, path, subpath=None):
+    def get_component(self, path, sid, subpath=None):
         route = self.routes.get(path)
         if route:
             if subpath and route.children:
                 subroute = next((child for child in route.children if child.path == subpath), None)
                 if subroute:
-                    return subroute.element(self.connection)
-            return route.element(self.connection)
+                    return subroute.element(sid=sid, connection=self.connection)
+            return route.element(sid=sid, connection=self.connection)
         return None
 
     def navigate_to(self, route: str, subroute: str=None):
@@ -31,4 +31,4 @@ class Router:
             component = self.get_component(route, subroute)
             print(f"find {route} in {self.routes} {component}")
             if self.connection:
-                self.connection.emit(route, route, "navigate_to")
+                self.connection.socket.emit("navigate_to", {"navigate_to" : route})

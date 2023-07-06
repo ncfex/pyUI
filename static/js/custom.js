@@ -7,11 +7,10 @@ socket.on('ping', function (data) {
 });
 socket.on("connect", function () {
   console.log("Connected to server");
-  document.cookie = `sid=${socket.id};`;
 });
 socket.on("disconnect", function () {
   console.log("Disconnected from server");
-  document.cookie = '';
+
 });
 socket.on('from_server', function (data) {
   console.log('Received message from server:', data);

@@ -7,7 +7,7 @@ import uuid
 class Element:    
     _current = None
 
-    def __init__(self, tag: Optional[str] = "div", id: Optional[str] = None, value: Optional[Any] = None, connection = None, **kwargs):
+    def __init__(self, sid:str, tag: Optional[str] = "div", id: Optional[str] = None, value: Optional[Any] = None, connection = None, **kwargs):
         self.id = id or str(uuid.uuid4())
         self.value = value
         self.tag = tag
@@ -18,6 +18,7 @@ class Element:
         self.styles: Dict[str, str] = {}
         self.parent = None
         self.connection = connection
+        self.sid = sid
 
         if Element._current is not None:
             Element._current.children.append(self)
@@ -74,6 +75,9 @@ class Element:
                 return result
         return None
 
+    def Elm(self, id):
+      return self.find_element_by_id(id)
+
     def navigate_to(self, route: str):
         if self.connection and self.connection.router:
             self.connection.router.navigate_to(route)
@@ -81,12 +85,10 @@ class Element:
     def render(self):
         rendered_str = Renderer.render(self)
 
-
         connection = self.connection or (self.parent.connection if self.parent else None)
         
         if connection:
-            connection.emit(self.id, rendered_str, "update-content")
-        
+            connection.emit("update-content", { "id": self.id, "value": rendered_str }, self.sid)
         return rendered_str
 
     def __enter__(self):

@@ -1,20 +1,22 @@
 # components/userPage.py
 
 from core.element import Element
-from core.component import Component
 from elements.button import Button
-from components.header import Header
+import random
 
-class UserPage(Component):
-    def __init__(self, connection=None, **kwargs):
-        super().__init__(id="user-page", **kwargs)
-        self.connection = connection
+class UserPage(Element):
+    def __init__(self, sid: str, connection=None, **kwargs):
+        super().__init__(sid, id="user-page", connection=connection, **kwargs)
         
         with self:
-            Button(id=f"{self.id}-button", value="Go to Home", connection=self.connection).add_event("click", self.button_click)
+            print(sid)
+            Element(sid, id=f"{self.id}-header", value="User Page Header", connection=self.connection)
+            Button(sid, id=f"{self.id}-button", value="Go to Home", connection=self.connection).add_event("click", self.button_click)
+            # Add more nested elements as required
 
     def button_click(self, element_id, event_name, sid):
         button = self.find_element_by_id(element_id)
-        print(button)
-        # button.value = "Going to Home"
+        button.value = "Going to Home"
+        button.add_style("color", f"rgb({random.randint(0, 255)}, {random.randint(0, 255)}, {random.randint(0, 255)})")
+        print(button.render())
         # button.navigate_to("home")
