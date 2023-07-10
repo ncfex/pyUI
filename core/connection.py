@@ -1,6 +1,6 @@
 from typing import Optional, Dict, Callable, Any
 from flask_socketio import SocketIO
-from .component import Element
+from .element import Element
 import uuid
 
 class Connection:
@@ -9,13 +9,13 @@ class Connection:
         self.socket: Optional[SocketIO] = None
         self.router = router
 
-    def register_component(self, component: 'Element', sid: str):
-        component.sid = sid  # store sid in component
-        component.id = component.id or str(uuid.uuid4())
+    def register_view(self, view: 'Element', sid: str):
+        view.sid = sid  # store sid in view
+        view.id = view.id or str(uuid.uuid4())
         if sid not in self.clients:
             self.clients[sid] = {}
-        self.clients[sid][component.id] = component
-        print(f'component registered as  {component} to user {sid}\nUsers components: {self.clients[sid]}')
+        self.clients[sid][view.id] = view
+        print(f'view registered as  {view} to user {sid}\nUsers views: {self.clients[sid]}')
 
     def remove_client(self, sid: str):
         if sid in self.clients:
@@ -33,8 +33,8 @@ class Connection:
         if self.clients.get(sid) is None:
             return None
 
-        for component in self.clients[sid].values():
-            element = component.find_element_by_id(element_id)
+        for view in self.clients[sid].values():
+            element = view.find_element_by_id(element_id)
             if element is not None:
                 print(f"Found element {element_id} -> {element} => FROM CONNECTION.RECEIVE")
                 element.handle_event(element.id, event_name, element.sid)

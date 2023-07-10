@@ -16,7 +16,7 @@ Session(app)
 connection = Connection()
 connection.socket = socketio
 
-from components.userPage import UserPage
+from views.userPage import UserPage
 
 # ROUTER
 router = Router(connection, {})
@@ -51,21 +51,21 @@ def index(route=None):
     sid = session.get('client_id', str(uuid.uuid4()))  # default to new UUID if client_id not in session
     session['client_id'] = sid  # set the session ID
 
-    component = router.get_component(route, sid) if route else router.get_component('home', sid)
-    connection.register_component(component, sid)
-    if not component:
-        return "Not found"
+    view = router.get_view(route, sid) if route else router.get_view('home', sid)
+    if not view:
+        return "Route not found"
+    connection.register_view(view, sid)
 
-    component_scripts, component_init_script = component.get_scripts()
-    styles = component.get_styles()
+    view_scripts, view_init_script = view.get_scripts()
+    styles = view.get_styles()
 
     scripts = [
         "https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js",
-        *component_scripts,
+        *view_scripts,
     ]
 
-    return render_template("index.html", scripts=scripts, component=component.render(),
-                       component_init_script=component_init_script, styles=styles)
+    return render_template("index.html", scripts=scripts, view=view.render(),
+                       view_init_script=view_init_script, styles=styles)
 
 if __name__ == '__main__':
     port=5000

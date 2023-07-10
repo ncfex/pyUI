@@ -11,11 +11,11 @@ class Router:
         self.connection = connection
         self.routes = {route.path: route for route in routes}
 
-    def add_route(self, route: str, component_class):
-        self.routes[route] = Route(route, component_class)
+    def add_route(self, route: str, view_class):
+        self.routes[route] = Route(route, view_class)
         print(f"{self.routes}")
 
-    def get_component(self, path, sid, subpath=None):
+    def get_view(self, path, sid, subpath=None):
         route = self.routes.get(path)
         if route:
             if subpath and route.children:
@@ -28,7 +28,7 @@ class Router:
     def navigate_to(self, route: str, subroute: str=None):
         print(f"Checking {route} in {self.routes}")
         if route in self.routes:
-            component = self.get_component(route, subroute)
-            print(f"find {route} in {self.routes} {component}")
+            view = self.get_view(route, subroute)
+            print(f"find {route} in {self.routes} {view}")
             if self.connection:
                 self.connection.socket.emit("navigate_to", {"navigate_to" : route})
