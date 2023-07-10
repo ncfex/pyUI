@@ -7,28 +7,46 @@ import uuid
 class Element:    
     _current = None
 
-    def __init__(self, sid:str, tag: Optional[str] = "div", id: Optional[str] = None, value: Optional[Any] = None, connection = None, **kwargs):
+    def __init__(self, sid: Optional[str] = None, tag: Optional[str] = "div", id: Optional[str] = None, value: Optional[Any] = None, connection = None, **kwargs):
         self.id = id or str(uuid.uuid4())
         self.value = value
         self.tag = tag
         self.children: List['Element'] = []
         self.attrs: Dict[str, str] = kwargs
-        self.events: Dict[str, Callable[[str, Any], None]] = {}
+        self.events: Dict[str, Callable] = {}
         self.classes: List[str] = []
         self.styles: Dict[str, str] = {}
-        self.parent = None
-        self.connection = connection
-        self.sid = sid
+        self.parent = Element._current if Element._current else None
+        self.connection = connection or (self.parent.connection if self.parent else None)
+        self.sid = sid or (self.parent.sid if self.parent else None)
+        self.root = self if self.parent is None else self.parent.root
+        self.elements = {} if self.root is self else None
 
-        if Element._current is not None:
-            Element._current.children.append(self)
-            self.parent = Element._current
+        if self.parent is not None:
+            self.parent.children.append(self)
+            
+        if self.root is not None:
+            self.root.elements[self.id] = self
         
     def get_scripts(self):
         return [], ''
 
     def get_styles(self):
         return []
+
+    def get_all_scripts(self):
+        header_scripts, init_scripts = self.get_scripts()
+        for child in self.children:
+            child_header_scripts, child_init_scripts = child.get_all_scripts()
+            header_scripts.extend(child_header_scripts)
+            init_scripts += child_init_scripts
+        return header_scripts, init_scripts
+
+    def get_all_styles(self):
+        styles = self.get_styles()
+        for child in self.children:
+            styles.extend(child.get_all_styles())
+        return styles
 
     def add_child(self, child: 'Element'):
         child.parent = self
@@ -37,8 +55,8 @@ class Element:
         self.children.append(child)
         return self
 
-    def add_event(self, event: str, callback: Callable[[str, Any], None]):
-        self.events[event] = callback
+    def add_event(self, event_name: str, handler: Callable):
+        self.events[event_name] = handler
         return self
 
     def handle_event(self, element_id: str, event_name: str, sid: str):
@@ -64,23 +82,14 @@ class Element:
         return f" on{event_name}='clientEmit(this.id, \"{event_name}\")'"
 
     def find_element_by_id(self, id: str) -> Optional['Element']:
-        if self.id == id:
-            return self
-        for child in self.children:
-            if child.id == id:
-                return child
-            result = child.find_element_by_id(id)
-            if result is not None:
-                print(f"Found element {result}")
-                return result
-        return None
+        return self.root.elements.get(id)
 
     def Elm(self, id):
-      return self.find_element_by_id(id)
+        return self.find_element_by_id(id)
 
     def navigate_to(self, route: str):
         if self.connection and self.connection.router:
-            self.connection.router.navigate_to(route)
+            self.connection.router.navigate_to(route, elem_id=self.id, sid=self.sid)
 
     def render(self):
         rendered_str = Renderer.render(self)
@@ -88,7 +97,7 @@ class Element:
         connection = self.connection or (self.parent.connection if self.parent else None)
         
         if connection:
-            connection.emit("update-content", { "id": self.id, "value": rendered_str }, self.sid)
+            self.connection.emit("from-server", {"event_name": "update-content", "id": self.id, "value": rendered_str }, self.sid)
         return rendered_str
 
     def __enter__(self):

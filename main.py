@@ -17,14 +17,16 @@ connection = Connection()
 connection.socket = socketio
 
 from views.userPage import UserPage
+from views.imageViewerPage import ImageViewerPage
 
 # ROUTER
 router = Router(connection, {})
 router.add_route("user", UserPage)
+router.add_route("view", ImageViewerPage)
 connection.router = router
 # ROUTER
 
-@socketio.on('from_client')
+@socketio.on('from-client')
 def handle_message(data):
     print(f"Received from {session['client_id']} => {data}")
     connection.receive(data, session['client_id'])
@@ -56,8 +58,8 @@ def index(route=None):
         return "Route not found"
     connection.register_view(view, sid)
 
-    view_scripts, view_init_script = view.get_scripts()
-    styles = view.get_styles()
+    view_scripts, view_init_script = view.get_all_scripts()
+    styles = view.get_all_styles()
 
     scripts = [
         "https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js",
@@ -65,9 +67,8 @@ def index(route=None):
     ]
 
     return render_template("index.html", scripts=scripts, view=view.render(),
-                       view_init_script=view_init_script, styles=styles)
+                       view_init_script=[view_init_script], styles=styles)
 
 if __name__ == '__main__':
     port=5000
     app.run(host="0.0.0.0",port=port)
-    

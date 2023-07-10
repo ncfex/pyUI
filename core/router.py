@@ -25,10 +25,14 @@ class Router:
             return route.element(sid=sid, connection=self.connection)
         return None
 
-    def navigate_to(self, route: str, subroute: str=None):
+    def navigate_to(self, route: str, subroute: str=None, sid=None, elem_id=None):
         print(f"Checking {route} in {self.routes}")
-        if route in self.routes:
-            view = self.get_view(route, subroute)
-            print(f"find {route} in {self.routes} {view}")
-            if self.connection:
-                self.connection.socket.emit("navigate_to", {"navigate_to" : route})
+        if sid is not None:
+          if route in self.routes:
+              view = self.get_view(route, subroute)
+              print(f"find {route} in {self.routes} {view}")
+              if self.connection:
+                  self.connection.emit("from-server", {"event_name": "change-location", "id": f"{elem_id}", "value": f"{route}" }, sid)
+        else:
+            print(f"No ELEM ID PROVIDED")
+            return -1

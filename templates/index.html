@@ -4,19 +4,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Add Content Security Policy -->
+  <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src https://*; child-src 'none';"> -->
   <title>Document</title>
+  <link rel="stylesheet" href="/static/css/custom.css">
   {% for style in styles %}
-    <link rel="stylesheet" href="{{ style }}">
-    {% endfor %}
-  {% for script in scripts %}
-  <script src="{{ script }}"></script>
+    <link rel="stylesheet" href="{{ style }}?v={{ version }}">
   {% endfor %}
 </head>
 
 <body>
   {{ view|safe }}
-  <script src="/static/js/custom.js"></script>
+  {% for script in scripts %}
+    <script src="{{ script }}?v={{ version }}" defer></script>
+  {% endfor %}
+  <script src="/static/js/custom.js?v={{ version }}" defer></script>
+  {% for init_script in view_init_script %}
+    <script defer>
+    document.addEventListener("DOMContentLoaded", function() {
+        {{ init_script|safe }}
+    });
+    </script>
+  {% endfor %}
 </body>
-
 
 </html>

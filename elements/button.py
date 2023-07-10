@@ -3,7 +3,6 @@
 from core.element import Element
 
 class Button(Element):
-    def __init__(self, sid: str, connection= None, *args, **kwargs):
-        super().__init__(sid, *args, **kwargs)
-        self.connection = connection
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.tag = "button"
