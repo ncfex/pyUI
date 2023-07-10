@@ -44,8 +44,6 @@ def handle_disconnect():
 
 @app.route('/')
 @app.route('/<path:route>')
-@app.route('/')
-@app.route('/<path:route>')
 def index(route=None):
     if route == "favicon.ico":
         return ""
