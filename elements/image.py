@@ -1,8 +1,8 @@
-# elements/footer.py
+# elements/image.py
 
 from core.element import Element
 
-class Footer(Element):
+class Image(Element):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.tag = "footer"
+        self.tag = "img"

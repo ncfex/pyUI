@@ -12,10 +12,10 @@ class CanvasPage(Element):
 
         with self:
             canvas = Canvas(id=f"{self.id}-canvas").width(500).height(500).add_style("background", "white")
-            canvas.add_event("mousedown", self.on_mouse_down)
-            canvas.add_event("mouseup", self.on_mouse_up)
-            canvas.add_event("mousemove", self.on_mouse_move)
-            Button(id=f"{self.id}-init-cnv-btn").add_event("click", self.init_canvas).value = "INIT CANVAS"
+            canvas.on("mousedown", self.on_mouse_down)
+            canvas.on("mouseup", self.on_mouse_up)
+            canvas.on("mousemove", self.on_mouse_move)
+            Button(id=f"{self.id}-init-cnv-btn").on("click", self.init_canvas).value = "INIT CANVAS"
 
     mouse_down = False
     selected_color = "black"

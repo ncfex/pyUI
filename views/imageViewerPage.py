@@ -1,6 +1,8 @@
 from core.element import Element
 from elements.button import Button
+from elements.image import Image
 from .userPage import UserPage
+
 import random
 
 class ImageViewerPage(Element):
@@ -9,15 +11,16 @@ class ImageViewerPage(Element):
 
         with self:
             Element(id="seadragon").add_style("width", "500px").add_style("height", "500px").add_style("z-index", "999")
-            Button(id="btn1", value="CLICK TO TRIGGER EVENT").add_event("click", self.trigger_event)
-            Button(id="btn2", value="OPEN").add_event("click", self.open)
+            Button(id="btn1", value="CLICK TO TRIGGER EVENT").on("click", self.trigger_event)
+            Button(id="btn2", value="OPEN").on("click", self.open)
 
             with Element().add_style("margin-top", "10px"):
-                Button(id="btn3", value="GO TO USER").add_event("click", self.goTo)
+                Button(id="btn3", value="GO TO USER").on("click", self.goTo)
             with UserPage():
                 with Element(id="test", tag="ul"):
                     for i in range(1,5):
-                        Element(tag="li", id=f"li-{i}", value=f"LIST ITEM {i}").add_event("click", self.liClick)
+                        Element(tag="li", id=f"li-{i}", value=f"LIST ITEM {i}").on("click", self.liClick)
+            Image(id=f"{self.id}-img1", src="https://www.heart.org/-/media/Images/Health-Topics/Congenital-Heart-Defects/50_1683_44a_ASD.jpg?h=551&w=572&hash=3840D24CC5C2E9FD46FF005B46DC6A0B", width=128, height=128)
 
     def get_styles(self):
         return super().get_styles()
@@ -173,7 +176,7 @@ class ImageViewerPage(Element):
     def liClick(self, element_id, event_name, value, sid):
         print(f"Triggered from {element_id}")
         self.Elm(element_id).add_style("color", f"rgb({random.randint(0, 255)}, {random.randint(0, 255)}, {random.randint(0, 255)})")
-        self.Elm(element_id).render()
+        self.Elm(element_id).update()
 
     def value_to_command(self,command,value):        
         command = {

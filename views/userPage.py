@@ -10,8 +10,8 @@ class UserPage(Element):
 
         with self:
             Element(id=f"{self.id}-header", value="User Page Header")
-            Button(id=f"{self.id}-button", value="TRY EVENTS").add_event("click", self.button_click)
-            Button(id=f"{self.id}-button1", value="Go to View Page").add_event("click", self.goTo)
+            Button(id=f"{self.id}-button", value="TRY EVENTS").on("click", self.button_click)
+            Button(id=f"{self.id}-button1", value="Go to View Page").on("click", self.goTo)
             with Element(id=f"{self.id}-asd", value="DIV"):
                 Element(id=f"{self.id}-dsa", value="DIV INSIDE").add_style("color", "red")
 
@@ -21,16 +21,16 @@ class UserPage(Element):
         button.add_style("color", f"rgb({random.randint(0, 255)}, {random.randint(0, 255)}, {random.randint(0, 255)})")
         self.Elm(f"{self.id}-header").add_style("background-color", f"rgb({random.randint(0, 255)}, {random.randint(0, 255)}, {random.randint(0, 255)})")
         self.Elm(f"{self.id}-dsa").add_style("color", f"rgb({random.randint(0, 255)}, {random.randint(0, 255)}, {random.randint(0, 255)})")
-        self.Elm(f"{self.id}-dsa").render()
-        self.Elm(f"{self.id}-header").render()
-        button.render()
+        self.Elm(f"{self.id}-dsa").update()
+        self.Elm(f"{self.id}-header").update()
+        button.update()
         # button.navigate_to("home")
     
     def goTo(self, element_id, event_name, value, sid):
         button = self.find_element_by_id(element_id)
         button.value = "Going to View Page"
         button.add_style("color", f"rgb({random.randint(0, 255)}, {random.randint(0, 255)}, {random.randint(0, 255)})")
-        button.render()
+        button.update()
         button.navigate_to("view")
 
     def get_scripts(self):

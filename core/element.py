@@ -55,7 +55,8 @@ class Element:
         self.children.append(child)
         return self
 
-    def add_event(self, event_name: str, handler: Callable):
+    # add_event
+    def on(self, event_name: str, handler: Callable):
         self.events[event_name] = handler
         return self
 
@@ -73,6 +74,9 @@ class Element:
     def add_style(self, style_name: str, style_value: str):
         self.styles[style_name] = style_value
         return self
+
+    def style(self, style_name: str, style_value: str):
+        self.add_style(style_name, style_value)
 
     def set_attr(self, attr_name: str, attr_value: str):
         self.attrs[attr_name] = attr_value
@@ -92,13 +96,17 @@ class Element:
             self.connection.router.navigate_to(route, elem_id=self.id, sid=self.sid)
 
     def render(self):
-        rendered_str = Renderer.render(self)
+        return Renderer.render(self)
 
+    def update(self):
         connection = self.connection or (self.parent.connection if self.parent else None)
         
         if connection:
-            self.connection.emit("from-server", {"event_name": "update-content", "id": self.id, "value": rendered_str }, self.sid)
-        return rendered_str
+            self.connection.emit("from-server", {"event_name": "update-content", "id": self.id, "value": self.render()}, self.sid)
+        
+
+    def __str__(self):
+        return self.render()
 
     def __enter__(self):
         self._prev = Element._current
