@@ -10,9 +10,9 @@ socket.on('ping', data => console.log("pong", "Received ping:", data));
 
 socket.on('from-server', handleServerMessage);
 
-function clientEmit(id, event_name) {
-  console.log(id, event_name)
-  socket.emit('from-client', { id: id, event_name: event_name });
+function clientEmit(id, event_name, value) {
+  console.log(id, event_name, value)
+  socket.emit('from-client', { id, event_name, value });
 }
 
 function handleServerMessage(data) {
@@ -68,4 +68,8 @@ function handleComplexEvents(data, el) {
       console.log("Unknown command:", command);
       break;
   }
+}
+
+function getElement(id){
+  return document.getElementById(id);
 }

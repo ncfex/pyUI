@@ -59,9 +59,9 @@ class Element:
         self.events[event_name] = handler
         return self
 
-    def handle_event(self, element_id: str, event_name: str, sid: str):
+    def handle_event(self, element_id: str, event_name: str, value:None, sid: str):
         if event_name in self.events:
-            self.events[event_name](element_id, event_name, sid)
+            self.events[event_name](element_id, event_name, value, sid)
 
     def add_class(self, class_name: str):
         self.classes.append(class_name)

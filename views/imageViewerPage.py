@@ -11,8 +11,10 @@ class ImageViewerPage(Element):
             Element(id="seadragon").add_style("width", "500px").add_style("height", "500px").add_style("z-index", "999")
             Button(id="btn1", value="CLICK TO TRIGGER EVENT").add_event("click", self.trigger_event)
             Button(id="btn2", value="OPEN").add_event("click", self.open)
-            Button(id="btn3", value="GO TO USER").add_event("click", self.goTo)
-            with UserPage() as user:
+
+            with Element().add_style("margin-top", "10px"):
+                Button(id="btn3", value="GO TO USER").add_event("click", self.goTo)
+            with UserPage():
                 with Element(id="test", tag="ul"):
                     for i in range(1,5):
                         Element(tag="li", id=f"li-{i}", value=f"LIST ITEM {i}").add_event("click", self.liClick)
@@ -156,18 +158,19 @@ class ImageViewerPage(Element):
         """
         return header_scripts, init_script
     
-    def trigger_event(self, element_id, event_name, sid):
+    def trigger_event(self, element_id, event_name, value, sid):
         print(f"Triggered event")
         self.connection.emit("from-server", {"event_name": "init-seadragon", "id": "seadragon", "value": "2" }, self.sid)
 
-    def open(self, element_id, event_name, sid):
+    def open(self, element_id, event_name, value, sid):
         print(f"Triggered event")
         self.connection.emit("from-server", {"event_name": "seadragon", "id": "seadragon", "value": self.value_to_command("open",{"type": "image","url": "https://picsum.photos/200/300"}) }, self.sid)
     
-    def goTo(self, element_id, event_name, sid):
+    def goTo(self, element_id, event_name, value, sid):
           print(f"Triggered event")
           self.navigate_to("user")
-    def liClick(self, element_id, event_name, sid):
+
+    def liClick(self, element_id, event_name, value, sid):
         print(f"Triggered from {element_id}")
         self.Elm(element_id).add_style("color", f"rgb({random.randint(0, 255)}, {random.randint(0, 255)}, {random.randint(0, 255)})")
         self.Elm(element_id).render()

@@ -18,11 +18,13 @@ connection.socket = socketio
 
 from views.userPage import UserPage
 from views.imageViewerPage import ImageViewerPage
+from views.canvasPage import CanvasPage
 
 # ROUTER
 router = Router(connection, {})
 router.add_route("user", UserPage)
 router.add_route("view", ImageViewerPage)
+router.add_route("canvas", CanvasPage)
 # ROUTER
 
 @socketio.on('from-client')

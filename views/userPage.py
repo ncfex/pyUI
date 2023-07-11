@@ -15,9 +15,9 @@ class UserPage(Element):
             with Element(id=f"{self.id}-asd", value="DIV"):
                 Element(id=f"{self.id}-dsa", value="DIV INSIDE").add_style("color", "red")
 
-    def button_click(self, element_id, event_name, sid):
+    def button_click(self, element_id, event_name, value, sid):
         button = self.find_element_by_id(element_id)
-        button.value = "Going to Home"
+        button.value = "Going to View"
         button.add_style("color", f"rgb({random.randint(0, 255)}, {random.randint(0, 255)}, {random.randint(0, 255)})")
         self.Elm(f"{self.id}-header").add_style("background-color", f"rgb({random.randint(0, 255)}, {random.randint(0, 255)}, {random.randint(0, 255)})")
         self.Elm(f"{self.id}-dsa").add_style("color", f"rgb({random.randint(0, 255)}, {random.randint(0, 255)}, {random.randint(0, 255)})")
@@ -26,7 +26,7 @@ class UserPage(Element):
         button.render()
         # button.navigate_to("home")
     
-    def goTo(self, element_id, event_name, sid):
+    def goTo(self, element_id, event_name, value, sid):
         button = self.find_element_by_id(element_id)
         button.value = "Going to View Page"
         button.add_style("color", f"rgb({random.randint(0, 255)}, {random.randint(0, 255)}, {random.randint(0, 255)})")

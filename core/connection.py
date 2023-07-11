@@ -29,6 +29,8 @@ class Connection:
     def receive(self, data: Dict[str, str], sid: str):
         element_id = data["id"]
         event_name = data["event_name"]
+        value = data.get("value", None)
+        print(f"Received event {event_name} from {element_id} with value {value} => FROM CONNECTION.RECEIVE")
 
         if self.clients.get(sid) is None:
             return None
@@ -37,5 +39,5 @@ class Connection:
             element = view.find_element_by_id(element_id)
             if element is not None:
                 print(f"Found element {element_id} -> {element} => FROM CONNECTION.RECEIVE")
-                element.handle_event(element.id, event_name, element.sid)
+                element.handle_event(element.id, event_name, value, element.sid)
                 break
