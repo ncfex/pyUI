@@ -23,7 +23,6 @@ from views.imageViewerPage import ImageViewerPage
 router = Router(connection, {})
 router.add_route("user", UserPage)
 router.add_route("view", ImageViewerPage)
-connection.router = router
 # ROUTER
 
 @socketio.on('from-client')
@@ -69,6 +68,9 @@ def index(route=None):
     return render_template("index.html", scripts=scripts, view=view.render(),
                        view_init_script=[view_init_script], styles=styles)
 
+def run(port=5000, debug=True):      
+    connection.router = router
+    app.run(host="0.0.0.0", port=port, debug=debug)
+
 if __name__ == '__main__':
-    port=5000
-    app.run(host="0.0.0.0",port=port)
+    run()

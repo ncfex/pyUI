@@ -1,7 +1,6 @@
 # components/userPage.py
 
 from core.element import Element
-from core.connection import Connection
 from elements.button import Button
 import random
 
@@ -40,3 +39,10 @@ class UserPage(Element):
         console.log("This is from userPage")
         """
         return header_scripts, init_script
+
+
+# from main import run, router
+
+# if __name__ == '__main__':
+#     router.add_route("user")
+#     run()

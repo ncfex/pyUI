@@ -1,7 +1,7 @@
 from core.element import Element
-from core.connection import Connection
 from elements.button import Button
 from .userPage import UserPage
+import random
 
 class ImageViewerPage(Element):
     def __init__(self, id="viewer-page", *args, **kwargs):
@@ -12,6 +12,10 @@ class ImageViewerPage(Element):
             Button(id="btn1", value="CLICK TO TRIGGER EVENT").add_event("click", self.trigger_event)
             Button(id="btn2", value="OPEN").add_event("click", self.open)
             Button(id="btn3", value="GO TO USER").add_event("click", self.goTo)
+            with UserPage() as user:
+                with Element(id="test", tag="ul"):
+                    for i in range(1,5):
+                        Element(tag="li", id=f"li-{i}", value=f"LIST ITEM {i}").add_event("click", self.liClick)
 
     def get_styles(self):
         return super().get_styles()
@@ -163,6 +167,10 @@ class ImageViewerPage(Element):
     def goTo(self, element_id, event_name, sid):
           print(f"Triggered event")
           self.navigate_to("user")
+    def liClick(self, element_id, event_name, sid):
+        print(f"Triggered from {element_id}")
+        self.Elm(element_id).add_style("color", f"rgb({random.randint(0, 255)}, {random.randint(0, 255)}, {random.randint(0, 255)})")
+        self.Elm(element_id).render()
 
     def value_to_command(self,command,value):        
         command = {
